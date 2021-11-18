@@ -7,16 +7,20 @@ from datetime import datetime
 
 class SA:
 
-    def __init__(self,descent_rate: float, initial_t: float, final_t: float, scale: float, x_min: list, x_max: list, markov_iter: int):
-        self.setParam(descent_rate,initial_t,final_t,scale, x_min,x_max,markov_iter)
+    def __init__(self,descent_rate: float, initial_t: float, final_t: float, scale: float, x_min, x_max, markov_iter: int, n_var: int):
+        self.setParam(descent_rate,initial_t,final_t,scale, x_min,x_max,markov_iter,n_var)
 
-    def setParam(self, descent_rate: float, initial_t: float, final_t: float, scale:float, x_min: list, x_max: list, markov_iter: int):
+    def setParam(self, descent_rate: float, initial_t: float, final_t: float, scale:float, x_min, x_max, markov_iter: int, n_var: int):
         self.descent_rate = descent_rate
         self.initial_t = initial_t
         self.final_t = final_t
         self.scale = scale
-        self.x_min = x_min
-        self.x_max = x_max
+
+        self.x_min = np.zeros((n_var))
+        self.x_max = np.zeros((n_var))
+
+        self.x_min[:] = x_min[:]
+        self.x_max[:] = x_max[:]
         self.n_var = 0
         self.energy = 0
         self.markov_iter = markov_iter
@@ -70,7 +74,7 @@ class SA:
                         reject_bad += 1
                 if(best_e > cur_e):
                     best_e = cur_e
-                    self.solution = cur_state
+                    self.solution[:] = cur_state[:]
             self.e_best_record.append(round(best_e,4))
             self.e_now_record.append(round(cur_e,4))
             self.iter_record.append(self.num_iter)
@@ -114,7 +118,7 @@ class SA:
 def main():
     x_min = [-500,-500]
     x_max = [500,500]
-    a = SA(0.98,100.0,1,0.5,x_min,x_max,100)
+    a = SA(0.98,100.0,1,0.5,x_min,x_max,100,2)
     x_initial = np.zeros(2)
     for v in range(2):
         x_initial[v] = random.uniform(x_min[v],x_max[v])
