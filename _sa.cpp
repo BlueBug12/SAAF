@@ -29,11 +29,15 @@ void SA::run(){
     int accept_good = 0;
     int accept_bad = 0;
     int reject_bad = 0;
+    size_t iter = 0;
     std::random_device rd;
     std::default_random_engine eng(rd());
     std::uniform_real_distribution<double> distr(0, 1);
 
     while(cur_t >= m_final_t){
+        int local_a_g = 0;
+        int local_a_b = 0;
+        int local_r_b = 0;
         for(size_t k = 0;k<m_markov_iter;++k){
             std::vector<double>new_state = neighbor(cur_state);
             double new_e = getEnergy(new_state);
@@ -41,16 +45,16 @@ void SA::run(){
                 cur_e = new_e;
                 cur_state.clear();
                 cur_state = new_state;
-                accept_good+=1;
+                local_a_g += 1;
             }else{
                 double prob = acceptance(cur_e,new_e,cur_t);
                 if(prob > distr(eng)){
                     cur_e = new_e;
                     cur_state.clear();
                     cur_state = new_state;
-                    accept_bad+=1;
+                    local_a_b += 1;
                 }else{
-                    reject_bad+=1;
+                    local_r_b += 1;
                 }
             }
             if(best_e > cur_e){
@@ -59,7 +63,13 @@ void SA::run(){
                 m_scale*=m_scale_descent_rate;
             }
         }
+        record r(iter,cur_e,cur_t,best_e,local_a_g/m_markov_iter,local_a_b/m_markov_iter,local_r_b/m_markov_iter);
+        records.push_back(std::move(r));
         cur_t *= m_descent_rate;
+        ++iter;
+        accept_good += local_a_g;
+        accept_bad += local_a_b;
+        reject_bad += local_r_b;
     }
     std::cout<<"accept good:"<<accept_good<<std::endl;
     std::cout<<"accept bad:"<<accept_bad<<std::endl;
