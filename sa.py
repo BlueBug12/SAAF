@@ -1,10 +1,9 @@
 import _sa
-#import pytest
 import random
 import numpy as np
 
-sa = _sa.SA();
-sa.setParam(0.98,100.0,1.0,0.5,100,2,0.99);
+sa = _sa.SA()
+sa.setParam(0.98,100.0,1.0,0.5,100,2,0.99)
 '''
 sa.setParam(
         descent_rate = 0.98,

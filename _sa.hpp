@@ -14,23 +14,23 @@ class SA{
        SA & operator=(SA &&) = delete;*/
        //~SA();
 
-       void setParam(float descent_rate, float initial_t, float final_t, float scale, size_t markov_iter, int n_var, float scale_descent_rate);
-       void setInitialState(std::vector<float>initial);
-       bool acceptance(float old_e, float new_e, float temperature);
+       void setParam(double descent_rate, double initial_t, double final_t, double scale, size_t markov_iter, int n_var, double scale_descent_rate);
+       void setInitialState(std::vector<double>initial);
+       double acceptance(double old_e, double new_e, double temperature);
        void run();
-       float getEnergy(std::vector<float>state);
-       std::vector<float> neighbor(std::vector<float>state);
+       double getEnergy(std::vector<double>state);
+       std::vector<double> neighbor(std::vector<double>state);
 
    private:
-       float m_descent_rate;
-       float m_initial_t;
-       float m_final_t;
-       float m_scale;
-       float m_energy;
+       double m_descent_rate;
+       double m_initial_t;
+       double m_final_t;
+       double m_scale;
+       double m_energy;
        size_t m_markov_iter;
        int   m_n_var;
-       float m_scale_descent_rate;
-       std::vector<float> m_initial_state;
+       double m_scale_descent_rate;
+       std::vector<double> m_initial_state;
 
        
 };

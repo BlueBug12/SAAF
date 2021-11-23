@@ -1,11 +1,11 @@
 #include "_sa.hpp"
 namespace py = pybind11;
 
-bool SA::acceptance(float old_e, float new_e, float temperature ){
+double SA::acceptance(double old_e, double new_e, double temperature ){
     return std::exp((old_e - new_e)/temperature); 
 }
 
-void SA::setParam(float descent_rate, float initial_t, float final_t, float scale, size_t markov_iter, int n_var, float scale_descent_rate){
+void SA::setParam(double descent_rate, double initial_t, double final_t, double scale, size_t markov_iter, int n_var, double scale_descent_rate){
     m_descent_rate = descent_rate;
     m_initial_t = initial_t;
     m_final_t = final_t;
@@ -15,33 +15,42 @@ void SA::setParam(float descent_rate, float initial_t, float final_t, float scal
     m_scale_descent_rate = scale_descent_rate;
 }
 
-void SA::setInitialState(std::vector<float>initial){
+void SA::setInitialState(std::vector<double>initial){
     m_initial_state = initial;
 }
 
 void SA::run(){
-    float cur_t = m_initial_t;    
-    std::vector<float>cur_state = m_initial_state;
-    std::vector<float>sol; 
-    float cur_e = getEnergy(cur_state);
-    float best_e  = cur_e;
+    double cur_t = m_initial_t;    
+    std::vector<double>cur_state = m_initial_state;
+    std::vector<double>sol; 
+    double cur_e = getEnergy(cur_state);
+    double best_e  = cur_e;
+
+    int accept_good = 0;
+    int accept_bad = 0;
+    int reject_bad = 0;
+    std::random_device rd;
+    std::default_random_engine eng(rd());
+    std::uniform_real_distribution<double> distr(0, 1);
 
     while(cur_t >= m_final_t){
         for(size_t k = 0;k<m_markov_iter;++k){
-            std::vector<float>new_state = neighbor(cur_state);
-            float new_e = getEnergy(new_state);
+            std::vector<double>new_state = neighbor(cur_state);
+            double new_e = getEnergy(new_state);
             if(new_e < cur_e){//better state than the current one
                 cur_e = new_e;
                 cur_state.clear();
                 cur_state = new_state;
+                accept_good+=1;
             }else{
-                if(acceptance(cur_e,new_e,cur_t)){
+                double prob = acceptance(cur_e,new_e,cur_t);
+                if(prob > distr(eng)){
                     cur_e = new_e;
                     cur_state.clear();
                     cur_state = new_state;
-
+                    accept_bad+=1;
                 }else{
-                    //
+                    reject_bad+=1;
                 }
             }
             if(best_e > cur_e){
@@ -52,40 +61,41 @@ void SA::run(){
         }
         cur_t *= m_descent_rate;
     }
+    std::cout<<"accept good:"<<accept_good<<std::endl;
+    std::cout<<"accept bad:"<<accept_bad<<std::endl;
+    std::cout<<"reject bad:"<<reject_bad<<std::endl;
     std::cout<<"result: "<<sol[0]<<","<<sol[1]<<std::endl;
 }
 
 
-float SA::getEnergy(std::vector<float>state){
-    float sum = 0.f;
-    for(size_t i=0;i<m_n_var;++i){
-        sum += state[i]*std::sin(std::abs(state[i]));
+double SA::getEnergy(std::vector<double>state){
+    double sum = 0.f;
+    for(int i=0;i<m_n_var;++i){
+        sum += state[i]*std::sin(std::sqrt(std::abs(state[i])));
     }
-    return sum;    
+    return 418.9829*m_n_var - sum;    
 }
 
-std::vector<float> SA::neighbor(std::vector<float>state){
-    std::default_random_engine generator;
-    std::normal_distribution<float> distribution(1.0,0.0);
-    std::vector<float> next_state = state;
+std::vector<double> SA::neighbor(std::vector<double>state){
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<double> dis(0.0,1.0);
+    std::vector<double> next_state = state;
     int i = std::rand()%m_n_var;
-    float n = state[i] + m_scale*1000*distribution(generator);
-    n = std::min(n,(float)500.0);
-    next_state[i] = std::max(n,(float)-500.0);
+    double n = state[i] + m_scale*1000*dis(gen);
+    n = std::min(n,500.0);
+    next_state[i] = std::max(n,-500.0);
     return next_state;
 }
 
-void test(){
-    std::cout<<"test"<<std::endl;
-}
 
 PYBIND11_MODULE(_sa, m){
     m.doc() = "SAAF";
-    m.def("test",&test);
     py::class_<SA>(m,"SA")
         .def(py::init<>())
         .def("setInitialState",&SA::setInitialState)
         .def("setParam",&SA::setParam)
         .def("acceptance",&SA::acceptance)
-        .def("run",&SA::run);
+        .def("run",&SA::run)
+        .def("getEnergy",&SA::getEnergy);
 }
