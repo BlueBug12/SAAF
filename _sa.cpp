@@ -1,11 +1,12 @@
 #include "_sa.hpp"
 namespace py = pybind11;
-
-double SA::acceptance(double old_e, double new_e, double temperature ){
+template <class T>
+double SA<T>::acceptance(double old_e, double new_e, double temperature ){
     return std::exp((old_e - new_e)/temperature); 
 }
 
-void SA::setParam(double descent_rate, double initial_t, double final_t, double scale, size_t markov_iter, int n_var, double scale_descent_rate){
+template <class T>
+void SA<T>::setParam(double descent_rate, double initial_t, double final_t, double scale, size_t markov_iter, int n_var, double scale_descent_rate){
     m_descent_rate = descent_rate;
     m_initial_t = initial_t;
     m_final_t = final_t;
@@ -15,14 +16,16 @@ void SA::setParam(double descent_rate, double initial_t, double final_t, double 
     m_scale_descent_rate = scale_descent_rate;
 }
 
-void SA::setInitialState(std::vector<double>initial){
+template <class T>
+void SA<T>::setInitialState(std::vector<T>initial){
     m_initial_state = initial;
 }
 
-void SA::run(){
+template <class T>
+void SA<T>::run(){
     double cur_t = m_initial_t;    
-    std::vector<double>cur_state = m_initial_state;
-    std::vector<double>sol; 
+    std::vector<T>cur_state = m_initial_state;
+    std::vector<T>sol; 
     double cur_e = getEnergy(cur_state);
     double best_e  = cur_e;
 
@@ -39,7 +42,7 @@ void SA::run(){
         int local_a_b = 0;
         int local_r_b = 0;
         for(size_t k = 0;k<m_markov_iter;++k){
-            std::vector<double>new_state = neighbor(cur_state);
+            std::vector<T>new_state = neighbor(cur_state);
             double new_e = getEnergy(new_state);
             if(new_e < cur_e){//better state than the current one
                 cur_e = new_e;
@@ -78,7 +81,8 @@ void SA::run(){
 }
 
 
-double SA::getEnergy(std::vector<double>state){
+template <class T>
+double SA<T>::getEnergy(std::vector<T>state){
     double sum = 0.f;
     for(int i=0;i<m_n_var;++i){
         sum += state[i]*std::sin(std::sqrt(std::abs(state[i])));
@@ -86,11 +90,12 @@ double SA::getEnergy(std::vector<double>state){
     return 418.9829*m_n_var - sum;    
 }
 
-std::vector<double> SA::neighbor(std::vector<double>state){
+template <class T>
+std::vector<T> SA<T>::neighbor(std::vector<T>state){
     std::random_device rd;
     std::mt19937 gen(rd());
     std::normal_distribution<double> dis(0.0,1.0);
-    std::vector<double> next_state = state;
+    std::vector<T> next_state = state;
     int i = std::rand()%m_n_var;
     double n = state[i] + m_scale*1000*dis(gen);
     n = std::min(n,500.0);
@@ -101,11 +106,11 @@ std::vector<double> SA::neighbor(std::vector<double>state){
 
 PYBIND11_MODULE(_sa, m){
     m.doc() = "SAAF";
-    py::class_<SA>(m,"SA")
+    py::class_<SA<double>>(m,"SA")
         .def(py::init<>())
-        .def("setInitialState",&SA::setInitialState)
-        .def("setParam",&SA::setParam)
-        .def("acceptance",&SA::acceptance)
-        .def("run",&SA::run)
-        .def("getEnergy",&SA::getEnergy);
+        .def("setInitialState",&SA<double>::setInitialState)
+        .def("setParam",&SA<double>::setParam)
+        .def("acceptance",&SA<double>::acceptance)
+        .def("run",&SA<double>::run)
+        .def("getEnergy",&SA<double>::getEnergy);
 }

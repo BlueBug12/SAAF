@@ -5,6 +5,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+namespace py = pybind11;
+
 struct record{
     record(int iter, double e, double t, double best_e, double g_rate, double b_rate, double r_rate):
         iteration(iter),
@@ -30,6 +32,7 @@ struct record{
     double reject_rate;
 };
 
+template <class T>
 class SA{
    public:
        //SA();
@@ -41,12 +44,11 @@ class SA{
        //~SA();
 
        void setParam(double descent_rate, double initial_t, double final_t, double scale, size_t markov_iter, int n_var, double scale_descent_rate);
-       void setInitialState(std::vector<double>initial);
+       void setInitialState(std::vector<T>initial);
        double acceptance(double old_e, double new_e, double temperature);
        void run();
-       double getEnergy(std::vector<double>state);
-       std::vector<double> neighbor(std::vector<double>state);
-
+       double getEnergy(std::vector<T>state);
+       std::vector<T> neighbor(std::vector<T>state);
        std::vector<record>records;
 
    private:
@@ -58,7 +60,5 @@ class SA{
        size_t m_markov_iter;
        int   m_n_var;
        double m_scale_descent_rate;
-       std::vector<double> m_initial_state;
-
-       
+       std::vector<T> m_initial_state;
 };
