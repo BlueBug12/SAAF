@@ -103,14 +103,15 @@ std::vector<T> SA<T>::neighbor(std::vector<T>state){
     return next_state;
 }
 
+//#define TYPE double
 
 PYBIND11_MODULE(_sa, m){
     m.doc() = "SAAF";
-    py::class_<SA<double>>(m,"SA")
+    py::class_<SA<TYPE>>(m,"SA")
         .def(py::init<>())
-        .def("setInitialState",&SA<double>::setInitialState)
-        .def("setParam",&SA<double>::setParam)
-        .def("acceptance",&SA<double>::acceptance)
-        .def("run",&SA<double>::run)
-        .def("getEnergy",&SA<double>::getEnergy);
+        .def("setInitialState",&SA<TYPE>::setInitialState)
+        .def("setParam",&SA<TYPE>::setParam)
+        .def("acceptance",&SA<TYPE>::acceptance)
+        .def("run",&SA<TYPE>::run)
+        .def("getEnergy",&SA<TYPE>::getEnergy);
 }
