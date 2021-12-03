@@ -1,4 +1,4 @@
-#import _sa
+import _sa
 import random
 import numpy as np
 import sys
@@ -74,12 +74,6 @@ def parser(block_file,nets_file):
 
 
 
-                
-
-
-
-
-
 #sa = _sa.SA()
 #sa.setParam(0.7,1000.0,1.0,1.0,100000,block_num*2,1.0)
 def main():
@@ -91,3 +85,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    sa = _sa.SA()
+    sa.test(1.1)
