@@ -45,14 +45,18 @@ class SA{
        SA & operator=(SA &&) = delete;*/
        //~SA();
 
-       void setParam(double descent_rate, double initial_t, double final_t, double scale, size_t markov_iter, int n_var, double scale_descent_rate);
-       void setInitialState(std::vector<T>initial);
+       void setParam(double descent_rate, double initial_t, double final_t, double scale, int markov_iter, int n_var, double scale_descent_rate);
+       void setInitialState(T initial);
        double acceptance(double old_e, double new_e, double temperature);
        void run();
        void test(T);
-       double getEnergy(std::vector<T>state);
-       std::vector<T> neighbor(std::vector<T>state);
+       double getEnergy();
+       void reverse();
+       void neighbor();
        std::vector<record>records;
+
+       T initial_state;
+       py::object libpy;
 
    private:
        double m_descent_rate;
@@ -60,8 +64,7 @@ class SA{
        double m_final_t;
        double m_scale;
        double m_energy;
-       size_t m_markov_iter;
+       int m_markov_iter;
        int   m_n_var;
        double m_scale_descent_rate;
-       std::vector<T> m_initial_state;
 };
