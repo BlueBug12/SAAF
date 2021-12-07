@@ -3,13 +3,11 @@
 
 #define TYPE2 std::pair<int,double>
 namespace py = pybind11;
-template <class T>
-double SA<T>::acceptance(double old_e, double new_e, double temperature ){
+double SA::acceptance(double old_e, double new_e, double temperature ){
     return std::exp((old_e - new_e)/temperature); 
 }
 
-template <class T>
-void SA<T>::setParam(double descent_rate, double initial_t, double final_t, double scale, int markov_iter, int n_var, double scale_descent_rate){
+void SA::setParam(double descent_rate, double initial_t, double final_t, double scale, int markov_iter, int n_var, double scale_descent_rate){
     m_descent_rate = descent_rate;
     m_initial_t = initial_t;
     m_final_t = final_t;
@@ -22,8 +20,7 @@ void SA<T>::setParam(double descent_rate, double initial_t, double final_t, doub
 }
 
 
-template <class T>
-void SA<T>::run(){
+void SA::run(){
     
     double cur_t = m_initial_t;    
     double cur_e = getEnergy();
@@ -77,7 +74,7 @@ void SA<T>::run(){
         std::cout<<"accept good rate:"<<accept_good_rate<<std::endl;
         std::cout<<"accept bad rate:"<<accept_bad_rate<<std::endl;
         std::cout<<"reject bad rate:"<<reject_bad_rate<<std::endl;
-        std::cout<<"Cost:"<<best_e<<std::endl;
+        std::cout<<"cost:"<<best_e<<std::endl<<std::endl;
 
         cur_t *= m_descent_rate;
         ++iter;
@@ -89,40 +86,39 @@ void SA<T>::run(){
     std::cout<<"accept good:"<<accept_good<<std::endl;
     std::cout<<"accept bad:"<<accept_bad<<std::endl;
     std::cout<<"reject bad:"<<reject_bad<<std::endl;
-    libpy.attr("writeOutput")();
+    output();
 }
 
-template <class T>
-double SA<T>::getEnergy(){
+double SA::getEnergy(){
     double dummy = 0.0;
     py::object d = py::cast(dummy);
     d = libpy.attr("getCost")();
     return d.cast<double>();
 }
 
-template <class T>
-void SA<T>::reverse(){
+void SA::reverse(){
     libpy.attr("reverse")();    
 }
 
-template <class T>
-void SA<T>::neighbor(){
+void SA::neighbor(){
     libpy.attr("neighbor")();
 }
 
-template <class T>
-void SA<T>::storeBest(){
+void SA::storeBest(){
     libpy.attr("storeBest")();
+}
+
+void SA::output(){
+    libpy.attr("output")();
 }
 //#define TYPE double
 
 PYBIND11_MODULE(_sa, m){
     m.doc() = "SAAF";
-    py::class_<SA<TYPE>>(m,"SA")
+    py::class_<SA>(m,"SA")
         .def(py::init<>())
-        .def("getEnergy",&SA<TYPE>::getEnergy)
-        .def("setParam",&SA<TYPE>::setParam)
-        .def("acceptance",&SA<TYPE>::acceptance)
-        .def("run",&SA<TYPE>::run)
-        .def("getEnergy",&SA<TYPE>::getEnergy);
+        .def("getEnergy",&SA::getEnergy)
+        .def("setParam",&SA::setParam)
+        .def("acceptance",&SA::acceptance)
+        .def("run",&SA::run);
 }

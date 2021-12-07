@@ -5,7 +5,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
-#include "type.hpp"
 
 namespace py = pybind11;
 
@@ -34,7 +33,6 @@ struct record{
     double reject_rate;
 };
 
-template <class T>
 class SA{
    public:
        //SA();
@@ -46,17 +44,15 @@ class SA{
        //~SA();
 
        void setParam(double descent_rate, double initial_t, double final_t, double scale, int markov_iter, int n_var, double scale_descent_rate);
-       void setInitialState(T initial);
        double acceptance(double old_e, double new_e, double temperature);
        void run();
-       void test(T);
        double getEnergy();
        void reverse();
        void neighbor();
        void storeBest();
+       void output();
        std::vector<record>records;
 
-       T initial_state;
        py::object libpy;
 
    private:

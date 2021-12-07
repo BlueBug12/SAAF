@@ -205,11 +205,8 @@ class Floorplan():
         else:
             self.width[x1],self.height[x1] = self.height[x1], self.width[x1] 
 
-        #print("After reverse:",self.pos_loci)
 
     def storeBest(self):
-        #print(self.cur_width,self.cur_height)
-        #print(self.alpha*self.area+(1-self.alpha)*self.hpwl)
         self.best_hpwl = self.hpwl
         self.best_area = self.area
         self.best_w = self.cur_width 
@@ -218,8 +215,6 @@ class Floorplan():
         self.best_height = self.height[:] 
         self.best_pos_x = self.pos_x[:]
         self.best_pos_y = self.pos_y[:]
-        print(self.best_w,self.best_h)
-        print(self.alpha*self.best_area+(1-self.alpha)*self.best_hpwl)
 
 
     def getArea(self):
@@ -267,7 +262,7 @@ class Floorplan():
         self.hpwl = self.getHPWL()
         return self.skew(self.cur_width,self.cur_height)*self.alpha*self.area+(1-self.alpha)*self.hpwl
 
-    def writeOutput(self):
+    def output(self):
         with open("output.txt","w") as fout:
             fout.write(str(int(self.best_area*self.alpha+(1-self.alpha)*self.best_hpwl))+"\n")
             fout.write(str(int(self.best_hpwl))+"\n")
@@ -278,19 +273,6 @@ class Floorplan():
             for i in range(self.block_num):
                 fout.write(str(inv_map[i])+" "+str(int(self.best_pos_x[i]))+" "+str(int(self.best_pos_y[i]))+" "+str(int(self.best_pos_x[i]+self.best_width[i]))+" "+str(int(self.best_pos_y[i]+self.best_height[i]))+"\n")
 
-def test():
-    sp = Floorplan()
-    sp.getCost()
-    sp.neighbor()
-
-    sp.getCost()
-    sp.neighbor()
-    sp.getCost()
-    sp.neighbor()
-    sp.getCost()
-
-    sp.writeOutput()
-    #sp.
 
 def main():
     descen_rate = 0.7
@@ -316,5 +298,4 @@ def main():
     '''
 
 if __name__ == "__main__":
-    #test()
     main()
