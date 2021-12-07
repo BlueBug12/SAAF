@@ -76,6 +76,7 @@ void SA<T>::run(){
         std::cout<<"accept good rate:"<<accept_good_rate<<std::endl;
         std::cout<<"accept bad rate:"<<accept_bad_rate<<std::endl;
         std::cout<<"reject bad rate:"<<reject_bad_rate<<std::endl;
+        std::cout<<"Cost:"<<best_e<<std::endl;
 
         cur_t *= m_descent_rate;
         ++iter;

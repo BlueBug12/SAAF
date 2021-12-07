@@ -4,7 +4,10 @@ import numpy as np
 import sys
 
 def swapList(list,pos1,pos2):
-    list[pos1], list[pos2] = list[pos2], list[pos1]
+    x1 = list[pos1]
+    x2 = list[pos2]
+    list[pos1] = x2
+    list[pos2] = x1
 
 class Floorplan():
     def __init__(self):
@@ -15,6 +18,11 @@ class Floorplan():
         self.nets_num = 0
         self.alpha = 0.6
         self.option = 0
+
+        self.hpwl = 0
+        self.area = 0
+        self.global_width = 0
+        self.global_height = 0
 
         self.pos_loci = []
         self.neg_loci = []
@@ -27,6 +35,7 @@ class Floorplan():
         self.nets = []
         self.index_map = {}
         self.op_record = [0,0,0]
+        self.bound = []
         self.parser("ami33/ami33.block","ami33/ami33.nets")
         self.setInitial()
 
@@ -86,6 +95,8 @@ class Floorplan():
                     pin_name = fin.readline().replace('\n','')
                     pin_index = self.index_map[pin_name]
                     self.nets[-1].append(pin_index)
+
+        self.bound = np.zeros([4,self.nets_num])
     
     def setInitial(self):
         for i in range(self.block_num):
@@ -97,8 +108,34 @@ class Floorplan():
             self.match_x[self.pos_loci[i]] = i
             self.match_y[self.neg_loci[i]] = i
 
+    def updateNet(self):
+        self.bound[0].fill(int(1e9))
+        self.bound[1].fill(int(-1e9))
+        self.bound[2].fill(int(-1e9))
+        self.bound[3].fill(int(1e9))
+        for i in range(self.nets_num):
+            for pin in self.nets[i]:
+                self.updateBound(i,pin)
+
+    def updateBound(self,net_id, pos_id):
+        assert(net_id<self.nets_num)
+        assert(pos_id<self.block_num+self.terminal_num)
+        x = self.pos_x[pos_id]
+        y = self.pos_y[pos_id]
+        if pos_id < self.block_num:
+           x += int(self.width[pos_id]/2)
+           y += int(self.height[pos_id]/2)
+        self.bound[0][net_id] = min(self.bound[0][net_id],x)
+        self.bound[1][net_id] = max(self.bound[1][net_id],x)
+        self.bound[2][net_id] = max(self.bound[2][net_id],y)
+        self.bound[3][net_id] = min(self.bound[3][net_id],y)
+    
     def getHPWL(self):
-        return 0
+        self.updateNet()
+        hpwl = 0
+        for i in range(self.nets_num):
+            hpwl += (self.bound[1][i]-self.bound[0][i]) + (self.bound[2][i]-self.bound[3][i])
+        return hpwl
     
     def neighbor(self):
         self.operation(random.randint(1,3))
@@ -135,7 +172,6 @@ class Floorplan():
             self.width[x1],self.height[x1] = self.height[x1], self.width[x1] 
             self.op_record[0] = x1
 
-
     
     def reverse(self):
         x1 = self.op_record[0]
@@ -144,8 +180,10 @@ class Floorplan():
             index = self.op_record[2]
             if(index == 0):
                 swapList(self.pos_loci,x1,x2)
+                swapList(self.match_x,self.pos_loci[x1],self.pos_loci[x2])
             else:
                 swapList(self.neg_loci,x1,x2)
+                swapList(self.match_y,self.neg_loci[x1],self.neg_loci[x2])
         elif self.option == 2:
             pos_i1 = self.match_x[x1]
             pos_i2 = self.match_x[x2]
@@ -157,6 +195,8 @@ class Floorplan():
             swapList(self.neg_loci,neg_i1,neg_i2)
         else:
             self.width[x1],self.height[x1] = self.height[x1], self.width[x1] 
+
+        #print("After reverse:",self.pos_loci)
 
 
     def getArea(self):
@@ -184,14 +224,55 @@ class Floorplan():
                 else:
                     break
         h = lcs[-1]
-        return w*h
+        return w,h
+
+    def skew(self,w,h):
+        r = (w*self.outline_width) / (h*self.outline_height)
+        if r < 1:
+            r = 1/r
+        if w > self.outline_width:
+            r*=1.1
+        if h > self.outline_height:
+            r*=1.1
+        if w <= self.outline_width and h<= self.outline_height:
+            r*=0.8
+        return r
 
     def getCost(self):
-        return self.alpha*self.getArea()+(1-self.alpha)*self.getHPWL()
-    
+        w, h = self.getArea()
+        self.global_width = w
+        self.global_height = h
+        area = w*h
+        hpwl = self.getHPWL()
+        self.area = area
+        self.hpwl = hpwl
+        return self.skew(w,h)*self.alpha*area+(1-self.alpha)*hpwl
 
-#sa = _sa.SA()
-#sa.setParam(0.7,1000.0,1.0,1.0,100000,block_num*2,1.0)
+    def writeOutput(self):
+        with open("output.txt","w") as fout:
+            fout.write(str(int(self.area*self.alpha+(1-self.alpha)*self.hpwl))+"\n")
+            fout.write(str(int(self.hpwl))+"\n")
+            fout.write(str(self.area)+"\n")
+            fout.write(str(int(self.global_width))+" "+str(int(self.global_height))+"\n")
+            fout.write("0.87"+"\n")
+            inv_map = {v: k for k,v in self.index_map.items()}
+            for i in range(self.block_num):
+                fout.write(str(inv_map[i])+" "+str(int(self.pos_x[i]))+" "+str(int(self.pos_y[i]))+" "+str(int(self.pos_x[i]+self.width[i]))+" "+str(int(self.pos_y[i]+self.height[i]))+"\n")
+
+def test():
+    sp = Floorplan()
+    sp.getCost()
+    sp.neighbor()
+
+    sp.getCost()
+    sp.neighbor()
+    sp.getCost()
+    sp.neighbor()
+    sp.getCost()
+
+    sp.writeOutput()
+    #sp.
+
 def main():
     descen_rate = 0.7
     initial_t = 1000.0
@@ -205,11 +286,7 @@ def main():
     sa.setParam(descen_rate,initial_t,final_t,scale,markov_iter,n_var,scale_descent_rate)
 
 
-    #sa.getEnergy([[0,2,1],[1,0,2]])
-    #sa.test([[0,2,1],[1,0,2]])
     sa.run()
-    #getCost([[0,1],[1,0]])
-    #sa.test()
     '''
     alpha = float(sys.argv[1])
     block_file = sys.argv[2]
@@ -220,4 +297,5 @@ def main():
     '''
 
 if __name__ == "__main__":
+    #test()
     main()
