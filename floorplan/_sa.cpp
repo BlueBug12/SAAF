@@ -1,24 +1,21 @@
 #include "_sa.hpp"
-#include <tuple>
 
-#define TYPE2 std::pair<int,double>
-namespace py = pybind11;
+SA::SA(py::object py_class){
+    libpy = py_class;
+}
+
 double SA::acceptance(double old_e, double new_e, double temperature ){
     return std::exp((old_e - new_e)/temperature); 
 }
 
-void SA::setParam(double descent_rate, double initial_t, double final_t, double scale, int markov_iter, int n_var, double scale_descent_rate){
+void SA::setParam(double descent_rate, double initial_t, double final_t, double scale, int markov_iter, double scale_descent_rate){
     m_descent_rate = descent_rate;
     m_initial_t = initial_t;
     m_final_t = final_t;
     m_scale = scale;
     m_markov_iter = markov_iter;
-    m_n_var = n_var;
     m_scale_descent_rate = scale_descent_rate;
-    py::object Floorplan = py::module_::import("floorplan").attr("Floorplan");
-    libpy = Floorplan();
 }
-
 
 void SA::run(){
     
@@ -32,6 +29,7 @@ void SA::run(){
     int local_ag = 0;
     int local_ab = 0;
     int local_rb = 0;
+    double e_sum = 0.0;
     size_t iter = 0;
     double accept_good_rate = 0.0;
     double accept_bad_rate = 0.0;
@@ -41,10 +39,12 @@ void SA::run(){
     std::default_random_engine eng(rd());
     std::uniform_real_distribution<double> distr(0, 1);
 
-    while(reject_bad_rate <= 0.95 && cur_t > m_final_t){
+    while(stopCondition(cur_t, iter,accept_good_rate,accept_bad_rate,reject_bad_rate)){
+        clock_t start = clock();
         for(int k = 0;k<m_markov_iter;++k){
-            neighbor();
+            jumpState(m_scale,cur_t,iter);
             double new_e = getEnergy();
+            e_sum += new_e;
             if(new_e < cur_e){//better state than the current one
                 cur_e = new_e;
                 local_ag += 1;
@@ -64,8 +64,9 @@ void SA::run(){
                 m_scale*=m_scale_descent_rate;
             }
         }
-        //record r(iter,cur_e,cur_t,best_e,local_ag/m_markov_iter,local_ab/m_markov_iter,local_rb/m_markov_iter);
-        //records.push_back(std::move(r));
+        clock_t end = clock();
+        record r(iter,e_sum/(double)m_markov_iter,cur_t,best_e,accept_good_rate,accept_bad_rate,reject_bad_rate,(end-start)/CLOCKS_PER_SEC);
+        records.push_back(std::move(r));
         int den = local_ag + local_ab + local_rb;
         accept_good_rate = (double)local_ag/den;
         accept_bad_rate = (double)local_ab/den;
@@ -82,6 +83,7 @@ void SA::run(){
         accept_bad += local_ab;
         reject_bad += local_rb;
         local_ag = local_ab = local_rb = 0;
+        e_sum = 0.0;
     }
     std::cout<<"accept good:"<<accept_good<<std::endl;
     std::cout<<"accept bad:"<<accept_bad<<std::endl;
@@ -90,18 +92,15 @@ void SA::run(){
 }
 
 double SA::getEnergy(){
-    double dummy = 0.0;
-    py::object d = py::cast(dummy);
-    d = libpy.attr("getCost")();
-    return d.cast<double>();
+    return libpy.attr("getCost")().cast<double>();
 }
 
 void SA::reverse(){
     libpy.attr("reverse")();    
 }
 
-void SA::neighbor(){
-    libpy.attr("neighbor")();
+void SA::jumpState(double scale, double cur_t, int iter){
+    libpy.attr("jumpState")(scale,cur_t,iter);
 }
 
 void SA::storeBest(){
@@ -111,14 +110,31 @@ void SA::storeBest(){
 void SA::output(){
     libpy.attr("output")();
 }
-//#define TYPE double
+
+bool SA::stopCondition(double cur_t,int iter, double ag_r, double ab_r, double rb_r){
+    return libpy.attr("stopCondition")(m_final_t,m_energy,cur_t,iter,ag_r,ab_r,rb_r).cast<bool>();
+}
+
+void SA::writeHistory(std::string file_name){
+    std::ofstream fout{file_name};
+    fout <<"iteration,average energy,temperature,lowest energy,accept good rate,accept bad rate,reject rate,time period" << std::endl;
+    for(size_t i=0;i<records.size();++i){
+        record & r = records.at(i);
+        fout << r.iteration << "," << r.energy << "," << r.temperature << "," 
+            << r.best_energy << "," << r.good_accept_rate << "," 
+            << r.bad_accept_rate << "," << r.reject_rate << "," 
+            << r.period << std::endl;
+    }
+    fout.close();
+}
 
 PYBIND11_MODULE(_sa, m){
     m.doc() = "SAAF";
     py::class_<SA>(m,"SA")
-        .def(py::init<>())
+        .def(py::init<py::object>())
         .def("getEnergy",&SA::getEnergy)
         .def("setParam",&SA::setParam)
         .def("acceptance",&SA::acceptance)
-        .def("run",&SA::run);
+        .def("run",&SA::run)
+        .def("writeHistory",&SA::writeHistory);
 }

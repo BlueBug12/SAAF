@@ -10,13 +10,14 @@ def swapList(list,pos1,pos2):
     list[pos2] = x1
 
 class Floorplan():
-    def __init__(self):
+    def __init__(self, block_file, nets_file, alpha,output_file):
         self.outline_width = 0
         self.outline_height = 0
         self.block_num = 0
         self.terminal_num = 0
         self.nets_num = 0
-        self.alpha = 0.6
+        self.alpha = alpha
+        self.output_file = output_file
         self.option = 0
 
         self.cur_hpwl = 0
@@ -45,7 +46,7 @@ class Floorplan():
         self.index_map = {}
         self.op_record = [0,0,0]
         self.bound = []
-        self.parser("ami33/ami33.block","ami33/ami33.nets")
+        self.parser(block_file,nets_file)
         self.setInitial()
 
     def parser(self,block_file,nets_file):
@@ -146,7 +147,7 @@ class Floorplan():
             hpwl += (self.bound[1][i]-self.bound[0][i]) + (self.bound[2][i]-self.bound[3][i])
         return hpwl
     
-    def neighbor(self):
+    def jumpState(self,scale,cur_t, iter):
         self.operation(random.randint(1,3))
 
     def operation(self,op):
@@ -263,7 +264,7 @@ class Floorplan():
         return self.skew(self.cur_width,self.cur_height)*self.alpha*self.area+(1-self.alpha)*self.hpwl
 
     def output(self):
-        with open("output.txt","w") as fout:
+        with open(self.output_file,"w") as fout:
             fout.write(str(int(self.best_area*self.alpha+(1-self.alpha)*self.best_hpwl))+"\n")
             fout.write(str(int(self.best_hpwl))+"\n")
             fout.write(str(self.best_area)+"\n")
@@ -272,30 +273,28 @@ class Floorplan():
             inv_map = {v: k for k,v in self.index_map.items()}
             for i in range(self.block_num):
                 fout.write(str(inv_map[i])+" "+str(int(self.best_pos_x[i]))+" "+str(int(self.best_pos_y[i]))+" "+str(int(self.best_pos_x[i]+self.best_width[i]))+" "+str(int(self.best_pos_y[i]+self.best_height[i]))+"\n")
+        
+    def stopCondition(self,final_t,energy,cur_t,iter,ag_r,ab_r,rb_r):
+        return rb_r <= 0.95 and cur_t > final_t
 
 
+#def main(alpha,block_file,nets_file):
 def main():
     descen_rate = 0.7
     initial_t = 1000.0
     final_t = 1.0
     scale = 0.5
     markov_iter = 10000
-    n_var = 2
-    scale_descent_rate = 0.3
-
-    sa = _sa.SA()
-    sa.setParam(descen_rate,initial_t,final_t,scale,markov_iter,n_var,scale_descent_rate)
-
-
-    sa.run()
-    '''
+    scale_descent_rate = 0
     alpha = float(sys.argv[1])
     block_file = sys.argv[2]
     nets_file = sys.argv[3]
+    output_file = sys.argv[4]
 
-    parser(block_file,nets_file)
-    print(block_num,"after parser")
-    '''
+    sa = _sa.SA(Floorplan(block_file,nets_file,alpha,output_file))
+    sa.setParam(descen_rate,initial_t,final_t,scale,markov_iter,scale_descent_rate)
+    sa.run()
+    sa.writeHistory("output.csv")
 
 if __name__ == "__main__":
     main()
