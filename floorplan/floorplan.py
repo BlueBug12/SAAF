@@ -19,10 +19,19 @@ class Floorplan():
         self.alpha = 0.6
         self.option = 0
 
-        self.hpwl = 0
-        self.area = 0
-        self.global_width = 0
-        self.global_height = 0
+        self.cur_hpwl = 0
+        self.cur_area = 0
+        self.cur_width = 0
+        self.cur_height = 0
+        
+        self.best_hpwl = 0
+        self.best_area = 0
+        self.best_w = 0
+        self.best_h = 0
+        self.best_width = []
+        self.best_height = []
+        self.best_pos_x = []
+        self.best_pos_y = []
 
         self.pos_loci = []
         self.neg_loci = []
@@ -198,6 +207,20 @@ class Floorplan():
 
         #print("After reverse:",self.pos_loci)
 
+    def storeBest(self):
+        #print(self.cur_width,self.cur_height)
+        #print(self.alpha*self.area+(1-self.alpha)*self.hpwl)
+        self.best_hpwl = self.hpwl
+        self.best_area = self.area
+        self.best_w = self.cur_width 
+        self.best_h = self.cur_height
+        self.best_width = self.width[:]
+        self.best_height = self.height[:] 
+        self.best_pos_x = self.pos_x[:]
+        self.best_pos_y = self.pos_y[:]
+        print(self.best_w,self.best_h)
+        print(self.alpha*self.best_area+(1-self.alpha)*self.best_hpwl)
+
 
     def getArea(self):
         lcs = np.zeros(self.block_num)
@@ -227,7 +250,7 @@ class Floorplan():
         return w,h
 
     def skew(self,w,h):
-        r = (w*self.outline_width) / (h*self.outline_height)
+        r = (h*self.outline_width) / (w*self.outline_height)
         if r < 1:
             r = 1/r
         if w > self.outline_width:
@@ -239,25 +262,21 @@ class Floorplan():
         return r
 
     def getCost(self):
-        w, h = self.getArea()
-        self.global_width = w
-        self.global_height = h
-        area = w*h
-        hpwl = self.getHPWL()
-        self.area = area
-        self.hpwl = hpwl
-        return self.skew(w,h)*self.alpha*area+(1-self.alpha)*hpwl
+        self.cur_width, self.cur_height = self.getArea()
+        self.area = self.cur_width*self.cur_height
+        self.hpwl = self.getHPWL()
+        return self.skew(self.cur_width,self.cur_height)*self.alpha*self.area+(1-self.alpha)*self.hpwl
 
     def writeOutput(self):
         with open("output.txt","w") as fout:
-            fout.write(str(int(self.area*self.alpha+(1-self.alpha)*self.hpwl))+"\n")
-            fout.write(str(int(self.hpwl))+"\n")
-            fout.write(str(self.area)+"\n")
-            fout.write(str(int(self.global_width))+" "+str(int(self.global_height))+"\n")
+            fout.write(str(int(self.best_area*self.alpha+(1-self.alpha)*self.best_hpwl))+"\n")
+            fout.write(str(int(self.best_hpwl))+"\n")
+            fout.write(str(self.best_area)+"\n")
+            fout.write(str(int(self.best_w))+" "+str(int(self.best_h))+"\n")
             fout.write("0.87"+"\n")
             inv_map = {v: k for k,v in self.index_map.items()}
             for i in range(self.block_num):
-                fout.write(str(inv_map[i])+" "+str(int(self.pos_x[i]))+" "+str(int(self.pos_y[i]))+" "+str(int(self.pos_x[i]+self.width[i]))+" "+str(int(self.pos_y[i]+self.height[i]))+"\n")
+                fout.write(str(inv_map[i])+" "+str(int(self.best_pos_x[i]))+" "+str(int(self.best_pos_y[i]))+" "+str(int(self.best_pos_x[i]+self.best_width[i]))+" "+str(int(self.best_pos_y[i]+self.best_height[i]))+"\n")
 
 def test():
     sp = Floorplan()

@@ -53,6 +53,7 @@ class SA{
        double getEnergy();
        void reverse();
        void neighbor();
+       void storeBest();
        std::vector<record>records;
 
        T initial_state;

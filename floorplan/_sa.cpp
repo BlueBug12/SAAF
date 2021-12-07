@@ -62,6 +62,7 @@ void SA<T>::run(){
                 }
             }
             if(best_e > cur_e){
+                storeBest();
                 best_e = cur_e;
                 m_scale*=m_scale_descent_rate;
             }
@@ -88,6 +89,7 @@ void SA<T>::run(){
     std::cout<<"accept good:"<<accept_good<<std::endl;
     std::cout<<"accept bad:"<<accept_bad<<std::endl;
     std::cout<<"reject bad:"<<reject_bad<<std::endl;
+    libpy.attr("writeOutput")();
 }
 
 template <class T>
@@ -108,6 +110,10 @@ void SA<T>::neighbor(){
     libpy.attr("neighbor")();
 }
 
+template <class T>
+void SA<T>::storeBest(){
+    libpy.attr("storeBest")();
+}
 //#define TYPE double
 
 PYBIND11_MODULE(_sa, m){
