@@ -292,6 +292,7 @@ def main():
     sa = _sa.SA(Floorplan(block_file,nets_file,alpha,output_file))
     sa.setParam(descen_rate,initial_t,final_t,scale,markov_iter,scale_descent_rate)
     sa.run(True,1)
+    sa.showReport()
     sa.output()
     sa.writeHistory("output.csv")
     sa.plot()

@@ -4,6 +4,7 @@
 #include <random>
 #include <chrono>
 #include <fstream>
+#include <iomanip>
 #include <pybind11/pybind11.h>
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
@@ -12,9 +13,10 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 struct record{
-    record(int iter, double e, double t, double best_e, double g_rate, double b_rate, double r_rate, double p):
+    record(int iter, double e, double ave_e, double t, double best_e, double g_rate, double b_rate, double r_rate, double p):
         iteration(iter),
-        energy(e),
+        current_energy(e),
+        average_energy(ave_e),
         temperature(t),
         best_energy(best_e),
         good_accept_rate(g_rate),
@@ -29,7 +31,8 @@ struct record{
     ~record() = default;
 
     int iteration;
-    double energy;
+    double current_energy;
+    double average_energy;
     double temperature;
     double best_energy;
     double good_accept_rate;
@@ -58,9 +61,13 @@ class SA{
        bool stopCondition(double cur_t, int iter, double ag_r, double ab_r, double rb_r);
        void writeHistory(std::string file_name);
        void plot();
+       void showReport();
        std::vector<record>records;
 
-       py::object libpy;
+
+       int total_accept_good;
+       int total_accept_bad;
+       int total_reject_bad;
 
    private:
        double m_descent_rate;
@@ -69,7 +76,9 @@ class SA{
        double m_scale;
        double m_energy;
        int m_markov_iter;
-       int   m_n_var;
+       double m_runtime;
+       double m_best_e;
        int m_iter;
        double m_scale_descent_rate;
+       py::object m_libpy;
 };
