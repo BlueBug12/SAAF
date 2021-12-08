@@ -277,8 +277,6 @@ class Floorplan():
     def stopCondition(self,final_t,energy,cur_t,iter,ag_r,ab_r,rb_r):
         return rb_r <= 0.95 and cur_t > final_t
 
-
-#def main(alpha,block_file,nets_file):
 def main():
     descen_rate = 0.7
     initial_t = 1000.0
@@ -293,8 +291,10 @@ def main():
 
     sa = _sa.SA(Floorplan(block_file,nets_file,alpha,output_file))
     sa.setParam(descen_rate,initial_t,final_t,scale,markov_iter,scale_descent_rate)
-    sa.run()
+    sa.run(True,1)
+    sa.output()
     sa.writeHistory("output.csv")
+    sa.plot()
 
 if __name__ == "__main__":
     main()

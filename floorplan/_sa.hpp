@@ -9,6 +9,7 @@
 #include <pybind11/stl.h>
 
 namespace py = pybind11;
+using namespace pybind11::literals;
 
 struct record{
     record(int iter, double e, double t, double best_e, double g_rate, double b_rate, double r_rate, double p):
@@ -47,8 +48,8 @@ class SA{
        ~SA() = default;
 
        void setParam(double descent_rate, double initial_t, double final_t, double scale, int markov_iter, double scale_descent_rate);
-       double acceptance(double old_e, double new_e, double temperature);
-       void run();
+       double acceptance(double old_e, double new_e, double temperature, double gain = 1);
+       void run(bool show = true, int logger_iter =  1);
        double getEnergy();
        void reverse();
        void jumpState(double scale, double cur_t, int iter);
@@ -56,6 +57,7 @@ class SA{
        void output();
        bool stopCondition(double cur_t, int iter, double ag_r, double ab_r, double rb_r);
        void writeHistory(std::string file_name);
+       void plot();
        std::vector<record>records;
 
        py::object libpy;
@@ -68,5 +70,6 @@ class SA{
        double m_energy;
        int m_markov_iter;
        int   m_n_var;
+       int m_iter;
        double m_scale_descent_rate;
 };
