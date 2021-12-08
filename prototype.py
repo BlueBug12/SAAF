@@ -46,7 +46,7 @@ def main():
 
 
     #demonstrate how to use SAAF----------------
-    sa = _sa.SA(CustomClss())
+    sa = _sa.SA(CustomClass())
     sa.setParam(descen_rate,initial_t,final_t,scale,markov_iter,scale_descent_rate)
     sa.run(show,logger_iter)
     sa.showReport()
