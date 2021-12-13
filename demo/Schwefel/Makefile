@@ -10,10 +10,7 @@ $(TARGET): _sa.cpp _sa.hpp
 .PHONY: clean test run
 
 run: 
-	python sa.py
-
-test: 
-	python3 -m pytest test.py
+	python Schwefel.py 
 
 clean: 
-	rm -rf *.o *.so __pycache__ .pytest_cache *.txt *.csv *.HPWL
+	rm -rf *.o *.so __pycache__ .pytest_cache *.txt *.csv
