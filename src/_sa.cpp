@@ -65,7 +65,7 @@ void SA::run(bool show, int logger_iter){
             }
         }
         clock_t end = clock();
-        record r(m_iter,cur_e,e_sum/(double)m_markov_iter,cur_t,m_best_e,accept_good_rate,accept_bad_rate,reject_bad_rate,(end-start)/CLOCKS_PER_SEC);
+        record r(m_iter,cur_e,e_sum/(double)m_markov_iter,cur_t,m_best_e,accept_good_rate,accept_bad_rate,reject_bad_rate,(double)(end-start)/CLOCKS_PER_SEC);
         records.push_back(std::move(r));
         int den = local_ag + local_ab + local_rb;
         accept_good_rate = (double)local_ag/den;
