@@ -56,11 +56,12 @@ def main():
     #---------------------
 
     #custom part----------
-    x_min = [-500,-500]
-    x_max = [500,500]
+    n_var = 10 
+    x_min = np.full(n_var,-500)
+    x_max = np.full(n_var,500)
     #--------------------
 
-    sa = _sa.SA(CustomClass(2,x_min,x_max))
+    sa = _sa.SA(CustomClass(n_var,x_min,x_max))
     sa.setParam(descen_rate,initial_t,final_t,scale,markov_iter,scale_descent_rate)
     sa.run(show,logger_iter)
     sa.showReport()
