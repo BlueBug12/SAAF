@@ -257,7 +257,7 @@ class Floorplan():
             r*=0.8
         return r
 
-    def getCost(self):
+    def getEnergy(self):
         self.cur_width, self.cur_height = self.getArea()
         self.area = self.cur_width*self.cur_height
         self.hpwl = self.getHPWL()
