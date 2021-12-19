@@ -7,7 +7,14 @@ API
 These functions are actually written with C++ and wrapped by `pybind11`, they are the basic architecture of SA process. User should set the parameter properly, and call the functions if needed.
 .. code-block:: python
     
-    def setParam()
+    def setParam(descent_rate,initial_t,final_t,scale,markov_iter,scale_descent_rate)
+Set SA parameter.
+    - `descent_rate`: descent rate of temperature. After each iteration, the new temperature should be old_temperature*descent_rate 
+    - `initial_t`: initial temperature
+    - `final_t`: final temperature
+    - `scale`: scale the range of jumping state
+    - `markov_iter`: inner loop of SA, in this loop the temperature won't be change
+    - `scale_descent_rate`: descent rate of scale value  
 
 .. code-block:: python
 
@@ -27,6 +34,7 @@ Write the data into CSV file.
 .. code-block:: python
 
     def plot()
+
  Plot the temperature history.
 
 
