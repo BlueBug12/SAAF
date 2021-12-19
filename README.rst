@@ -5,6 +5,7 @@ SAAF : a Simulated-Annealing Algorithm Framework
 API
 ===
 These functions are actually written with C++ and wrapped by `pybind11`, they are the basic architecture of SA process. User should set the parameter properly, and call the functions if needed.
+
 .. code-block:: python
     
     def setParam(descent_rate,initial_t,final_t,scale,markov_iter,scale_descent_rate)
@@ -35,7 +36,7 @@ Write the data into CSV file.
 
     def plot()
 
- Plot the temperature history.
+Plot the temperature history.
 
 
 User defined function
