@@ -25,7 +25,10 @@ jobs:
         sudo apt-get -qy install python python3 \
             python3-numpy python3-pytest
     - name: change directory
-      run: cd demo/Schwefel/
+      run: |
+          cd demo/Schwefel/
+          ls
+          pwd
     - name: clean
       run: make clean
     - name: make
