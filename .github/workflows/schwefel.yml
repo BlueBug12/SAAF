@@ -1,0 +1,32 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ schwefel ]
+  pull_request:
+    branches: [ schwefel ]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+        matrix:
+          os: [ubuntu-20.04]
+
+        fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: dependency (ubuntu)
+      run: |
+        sudo apt-get -q update \
+        sudo apt-get -qy install python python3 \
+            python3-numpy python3-pytest
+    - name: clean
+      run: make clean
+    - name: make
+      run: make
+    - name: test
+      run: make test
