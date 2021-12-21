@@ -4,8 +4,6 @@ import numpy as np
 import sys
 import custom.Schwefel as m
 
-
-
 def main():
     #parameter setting-----
     descen_rate = 0.98
