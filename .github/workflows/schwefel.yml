@@ -3,10 +3,10 @@ name: schwefel
 on:
   push:
     branches:
-        - schwefel
+      - schwefel
   pull_request:
     branches:
-        - schwefel
+      - schwefel
 
 jobs:
   build:
@@ -39,20 +39,11 @@ jobs:
     - name: dependency (custom)
       run: |
         export INSTALL_PREFIX=/usr
-        ls | grep contrib
         sudo contrib/install.sh everything
 
-    - name: clean
+    - name: grade
       run: |
-          cd demo/Schwefel/
-          make clean
-
-    - name: make
-      run: |
-          cd demo/Schwefel/
-          make
-
-    - name: test
-      run: |
-          cd demo/Schwefel/
-          make test
+        username=$( [ -z "${{ github.event.pull_request.user.login }}" ] && echo $GITHUB_REPOSITORY | cut -d '/' -f 1 || echo ${{ github.event.pull_request.user.login }})
+        echo "cd hw2/$username"
+        cd hw2/$username
+        ../validate.sh
