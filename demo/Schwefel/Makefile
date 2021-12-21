@@ -10,7 +10,7 @@ $(TARGET): _sa.cpp _sa.hpp
 .PHONY: clean test run
 
 run: 
-	python3 Schwefel.py 
+	python3 main.py 
 test:
 	pytest test.py
 
