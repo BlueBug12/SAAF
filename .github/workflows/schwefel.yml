@@ -39,7 +39,7 @@ jobs:
     - name: dependency (custom)
       run: |
         export INSTALL_PREFIX=/usr
-        sudo contrib/install.sh pybind11
+        sudo contrib/install.sh everything
 
     - name: clean
       run: |
