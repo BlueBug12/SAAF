@@ -17,8 +17,8 @@ if [ -z "$executable" ] ; then
 fi
 
 echo "run pytest:"
-env PYTHONPATH=".:$PYTHONPATH" python3 -m pytest -v ; ret=$?
-if [ $ret -ne  0 ] ; then echo "failure" ; exit 1 ; fi
+#env PYTHONPATH=".:$PYTHONPATH" python3 -m pytest -v ; ret=$?
+#if [ $ret -ne  0 ] ; then echo "failure" ; exit 1 ; fi
 
 echo "make test:"
 make test ; ret=$?
