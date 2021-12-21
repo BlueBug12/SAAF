@@ -2,9 +2,11 @@ name: schwefel
 
 on:
   push:
-    branches: [ schwefel ]
+    branches:
+        - schwefel
   pull_request:
-    branches: [ schwefel ]
+    branches:
+        - schwefel
 
 jobs:
   build:
@@ -33,9 +35,11 @@ jobs:
             python3-numpy python3-scipy python3-pandas python3-matplotlib \
             jupyter
         cd /usr/bin ; sudo ln -sf py.test-3 py.test
+
     - name: dependency (custom)
       run: |
         export INSTALL_PREFIX=/usr
+        ls | grep contrib
         sudo contrib/install.sh everything
 
     - name: clean
