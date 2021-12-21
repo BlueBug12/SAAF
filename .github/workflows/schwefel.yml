@@ -39,18 +39,9 @@ jobs:
     - name: dependency (custom)
       run: |
         export INSTALL_PREFIX=/usr
-        sudo contrib/install.sh everything
+        sudo contrib/install.sh pybind11 
 
-    - name: clean
-      run: |
-          cd demo/Schwefel/
-          make clean
-    - name: make
-      run: |
-          cd demo/Schwefel/
-          make
     - name: test
       run: |
           cd demo/Schwefel/
-          make test
-
+          ./validate.sh
