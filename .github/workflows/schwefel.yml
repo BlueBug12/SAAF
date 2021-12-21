@@ -27,10 +27,10 @@ jobs:
     - name: change directory
       run: |
           cd demo/Schwefel/
-          ls
-          pwd
     - name: clean
-      run: make clean
+      run: |
+          ls
+          make clean
     - name: make
       run: make
     - name: test
