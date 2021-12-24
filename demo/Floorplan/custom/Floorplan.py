@@ -9,7 +9,7 @@ def swapList(list,pos1,pos2):
     list[pos1] = x2
     list[pos2] = x1
 
-class Floorplan():
+class CustomClass():
     def __init__(self, block_file, nets_file, alpha,output_file):
         self.outline_width = 0
         self.outline_height = 0
@@ -276,26 +276,5 @@ class Floorplan():
         
     def stopCondition(self,final_t,energy,cur_t,iter,ag_r,ab_r,rb_r):
         return rb_r <= 0.95 and cur_t > final_t
+    
 
-def main():
-    descen_rate = 0.7
-    initial_t = 1000.0
-    final_t = 1.0
-    scale = 0.5
-    markov_iter = 10000
-    scale_descent_rate = 0
-    alpha = float(sys.argv[1])
-    block_file = sys.argv[2]
-    nets_file = sys.argv[3]
-    output_file = sys.argv[4]
-
-    sa = _sa.SA(Floorplan(block_file,nets_file,alpha,output_file))
-    sa.setParam(descen_rate,initial_t,final_t,scale,markov_iter,scale_descent_rate)
-    sa.run(True,1)
-    sa.showReport()
-    sa.output()
-    sa.writeHistory("output.csv")
-    sa.plot()
-
-if __name__ == "__main__":
-    main()
