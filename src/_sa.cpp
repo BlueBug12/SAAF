@@ -39,7 +39,7 @@ void SA::run(bool show, int logger_iter){
     std::default_random_engine eng(rd());
     std::uniform_real_distribution<double> distr(0, 1);
 
-    while(stopCondition(cur_t, m_iter,accept_good_rate,accept_bad_rate,reject_bad_rate)){
+    while(stopCondition(cur_t, m_iter,accept_good_rate,accept_bad_rate,reject_bad_rate,m_best_e)){
         clock_t start = clock();
         for(int k = 0;k<m_markov_iter;++k){
             jumpState(m_scale,cur_t,m_iter);
@@ -143,8 +143,8 @@ void SA::output(){
     m_libpy.attr("output")();
 }
 
-bool SA::stopCondition(double cur_t,int iter, double ag_r, double ab_r, double rb_r){
-    return m_libpy.attr("stopCondition")(m_final_t,m_energy,cur_t,iter,ag_r,ab_r,rb_r).cast<bool>();
+bool SA::stopCondition(double cur_t,int iter, double ag_r, double ab_r, double rb_r, double m_best_e){
+    return m_libpy.attr("stopCondition")(m_final_t,m_energy,cur_t,iter,ag_r,ab_r,rb_r,m_best_e).cast<bool>();
 }
 
 void SA::writeHistory(std::string file_name){
