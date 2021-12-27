@@ -40,5 +40,5 @@ class CustomClass():
         
         
     def stopCondition(self,final_t,energy,cur_t,iter,ag_r,ab_r,rb_r,best_e)->bool:
-        return cur_t >= final_t
+        return cur_t < final_t
 

@@ -58,7 +58,7 @@ class SA{
        void jumpState(double scale, double cur_t, int iter);
        void storeBest();
        void output();
-       bool stopCondition(double cur_t, int iter, double ag_r, double ab_r, double rb_r);
+       bool stopCondition(double cur_t, int iter, double ag_r, double ab_r, double rb_r, double best_e);
        void writeHistory(std::string file_name);
        void plot();
        void showReport();
