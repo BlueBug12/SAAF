@@ -275,6 +275,6 @@ class CustomClass():
                 fout.write(str(inv_map[i])+" "+str(int(self.best_pos_x[i]))+" "+str(int(self.best_pos_y[i]))+" "+str(int(self.best_pos_x[i]+self.best_width[i]))+" "+str(int(self.best_pos_y[i]+self.best_height[i]))+"\n")
         
     def stopCondition(self,final_t,energy,cur_t,iter,ag_r,ab_r,rb_r,best_e):
-        return rb_r <= 0.95 and cur_t > final_t
+        return rb_r > 0.95 or cur_t <= final_t
     
 
