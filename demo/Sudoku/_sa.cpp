@@ -72,15 +72,13 @@ void SA::run(bool show, int logger_iter){
         accept_bad_rate = (double)local_ab/den;
         reject_bad_rate = (double)local_rb/den;
         if(show && m_iter%logger_iter==0){
-            std::cout<<"================================"<<std::endl;
-            std::cout<<"iteration "<<m_iter<<std::endl;
-            std::cout<<"accept good rate:"<<accept_good_rate<<std::endl;
-            std::cout<<"accept bad rate:"<<accept_bad_rate<<std::endl;
-            std::cout<<"reject bad rate:"<<reject_bad_rate<<std::endl;
-            std::cout<<"T = "<<cur_t<<std::endl;
-            std::cout<<"current cost:"<<cur_e<<std::endl;
-            std::cout<<"best cost:"<<m_best_e<<std::endl;
-            std::cout<<"================================"<<std::endl;
+            std::cout<<"Iteration = "<<std::left<<std::setw(10)<<m_iter;
+            std::cout<<"AG rate = "<<std::setw(8)<<accept_good_rate;
+            std::cout<<"AB rate = "<<std::setw(8)<<accept_bad_rate;
+            std::cout<<"RB rate = "<<std::setw(8)<<reject_bad_rate;
+            std::cout<<"T = "<<std::setw(13)<<cur_t;
+            std::cout<<"current cost = "<<std::setw(10)<<cur_e;
+            std::cout<<"best cost = "<<std::setw(10)<<m_best_e<<std::endl;
         }
 
         cur_t *= m_descent_rate;

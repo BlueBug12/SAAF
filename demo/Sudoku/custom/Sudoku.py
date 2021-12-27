@@ -9,6 +9,8 @@ class CustomClass():
         self.none_zero_idx = np.arange(81)[self.state>0]
         self.best_state = np.zeros(81)
         self.swap_idx = [0,0]
+
+    def random_fill(self):
         #randomly fill the empty entries
         for num in range(9):
             b_idx = self.get_block_indices(num)
@@ -18,7 +20,7 @@ class CustomClass():
             random.shuffle(to_fill)
             for i in range(len(to_fill)):
                 self.state[zero_indices[i]] = to_fill[i]
-    
+
     def get_block_indices(self,b,ignore = False):
         row_base = (b//3)*3
         col_base = (b%3)*3
@@ -44,12 +46,26 @@ class CustomClass():
 
     def get_row_indixes(slef,row):
         return [i + 9*row for i in range(9)]
+
+    def view(self):
+        def notzero(s):
+            if s > 0:
+                return str(s)
+            else:
+                return " "
+        results = np.array([self.state[self.get_row_indixes(i)] for i in range(9)])
+        out_s = ""
+        for i, row in enumerate(results):
+            if i%3==0:
+                out_s += "="*25+'\n'
+            out_s += "| " + " | ".join([" ".join(notzero(s) for s in list(row)[3*(k-1):3*k]) for k in range(1,4)]) + " |\n"
+        out_s += "="*25+'\n'
+        print(out_s)
     
     def jumpState(self,scale,cur_t, iter):
         block = random.randint(0,8)
         zero_indices = self.get_block_indices(block,ignore=True)
         self.swap_idx = random.sample(zero_indices,2)
-        #self.swap_idx = picked_block.copy()
         s1 = self.swap_idx[0]
         s2 = self.swap_idx[1]
         self.state[s1], self.state[s2] = self.state[s2], self.state[s1]

@@ -39,7 +39,7 @@ void SA::run(bool show, int logger_iter){
     std::default_random_engine eng(rd());
     std::uniform_real_distribution<double> distr(0, 1);
 
-    while(stopCondition(cur_t, m_iter,accept_good_rate,accept_bad_rate,reject_bad_rate)){
+    while(!stopCondition(cur_t, m_iter,accept_good_rate,accept_bad_rate,reject_bad_rate,m_best_e)){
         clock_t start = clock();
         for(int k = 0;k<m_markov_iter;++k){
             jumpState(m_scale,cur_t,m_iter);
@@ -72,13 +72,13 @@ void SA::run(bool show, int logger_iter){
         accept_bad_rate = (double)local_ab/den;
         reject_bad_rate = (double)local_rb/den;
         if(show && m_iter%logger_iter==0){
-            std::cout<<"================================"<<std::endl;
-            std::cout<<"iteration "<<m_iter<<std::endl;
-            std::cout<<"accept good rate:"<<accept_good_rate<<std::endl;
-            std::cout<<"accept bad rate:"<<accept_bad_rate<<std::endl;
-            std::cout<<"reject bad rate:"<<reject_bad_rate<<std::endl;
-            std::cout<<"cost:"<<m_best_e<<std::endl;
-            std::cout<<"================================"<<std::endl;
+            std::cout<<"Iteration = "<<std::left<<std::setw(10)<<m_iter;
+            std::cout<<"AG rate = "<<std::setw(8)<<accept_good_rate;
+            std::cout<<"AB rate = "<<std::setw(8)<<accept_bad_rate;
+            std::cout<<"RB rate = "<<std::setw(8)<<reject_bad_rate;
+            std::cout<<"T = "<<std::setw(13)<<cur_t;
+            std::cout<<"current cost = "<<std::setw(10)<<cur_e;
+            std::cout<<"best cost = "<<std::setw(10)<<m_best_e<<std::endl;
         }
 
         cur_t *= m_descent_rate;
@@ -143,8 +143,8 @@ void SA::output(){
     m_libpy.attr("output")();
 }
 
-bool SA::stopCondition(double cur_t,int iter, double ag_r, double ab_r, double rb_r){
-    return m_libpy.attr("stopCondition")(m_final_t,m_energy,cur_t,iter,ag_r,ab_r,rb_r).cast<bool>();
+bool SA::stopCondition(double cur_t,int iter, double ag_r, double ab_r, double rb_r, double best_e){
+    return m_libpy.attr("stopCondition")(m_final_t,m_energy,cur_t,iter,ag_r,ab_r,rb_r,best_e).cast<bool>();
 }
 
 void SA::writeHistory(std::string file_name){
