@@ -1,12 +1,12 @@
-name: floorplan
+name: sudoku
 
 on:
   push:
     branches:
-      - floorplan
+      - sudoku
   pull_request:
     branches:
-      - floorplan
+      - sudoku
 
 jobs:
   build:
@@ -43,5 +43,5 @@ jobs:
 
     - name: test
       run: |
-          cd demo/Floorplan/
+          cd demo/Sudoku/
           ./validate.sh

@@ -12,7 +12,9 @@ run:
 	python3 main.py testbench/s1.txt
 
 test:
-	python3 -m pytest test.py
+	python3 -m pytest test.py testbench/s1.txt
+	python3 -m pytest test.py testbench/s2.txt
+	python3 -m pytest test.py testbench/empty.txt
 
 clean: 
 	rm -rf *.o *.so __pycache__ .pytest_cache *.txt *.csv

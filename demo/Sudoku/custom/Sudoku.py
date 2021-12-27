@@ -61,7 +61,10 @@ class CustomClass():
             out_s += "| " + " | ".join([" ".join(notzero(s) for s in list(row)[3*(k-1):3*k]) for k in range(1,4)]) + " |\n"
         out_s += "="*25+'\n'
         print(out_s)
-    
+
+    def getResult(self):
+        return self.state
+
     def jumpState(self,scale,cur_t, iter):
         block = random.randint(0,8)
         zero_indices = self.get_block_indices(block,ignore=True)
@@ -74,7 +77,7 @@ class CustomClass():
         self.state[self.swap_idx[0]], self.state[self.swap_idx[1]] = self.state[self.swap_idx[1]], self.state[self.swap_idx[0]]
 
     def storeBest(self):
-        self.best_state = np.copy(self.state)
+        pass
 
     def getEnergy(self)->float:
         score = 0
