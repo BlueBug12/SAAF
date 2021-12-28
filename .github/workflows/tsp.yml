@@ -43,5 +43,5 @@ jobs:
 
     - name: test
       run: |
-          cd demo/Traveling-salesman-problem/
+          cd demo/Travelling-salesman-problem/
           ./validate.sh
