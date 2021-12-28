@@ -11,9 +11,12 @@ def main():
     markov_iter = 1
     scale_descent_rate = 0
     c = m.CustomClass(parser(sys.argv[1]))
+    c.trivialInitial()
+    #c.greedyInitial()
     sa = _sa.SA(c)
     sa.setParam(descent_rate,initial_t,final_t,scale,markov_iter,scale_descent_rate)
     sa.run(True,100)
+    sa.showReport()
 
 if __name__ == "__main__":
     main()
