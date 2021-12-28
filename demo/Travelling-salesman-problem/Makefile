@@ -15,4 +15,4 @@ test:
 	python3 -m pytest test.py testbench/coord1.txt
 
 clean: 
-	rm -rf *.o *.so .pytest_cache *.txt *.csv */__pycache__/
+	rm -rf *.o *.so .pytest_cache *.txt *.csv */__pycache__/ __pycache__/

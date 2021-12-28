@@ -156,10 +156,15 @@ class CustomClass():
     def storeBest(self):
         self.best_state = np.copy(self.state)
 
-    def getEnergy(self)->float:
+    def getEnergy(self, best =False)->float:
         cost = 0
+        state = []
+        if best:
+            state = self.best_state
+        else:
+            state = self.state
         for i in range(self.n):
-            cost += self.dist(self.state[i%self.n],self.state[(i+1)%self.n])
+            cost += self.dist(state[i%self.n],state[(i+1)%self.n])
         return cost
 
     def output(self):
