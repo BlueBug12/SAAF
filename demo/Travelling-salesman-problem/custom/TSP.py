@@ -60,21 +60,11 @@ def plotTSP(paths, points, num_iters=1):
     plt.show()
 
 def animateTSP(history, points, filename):
-    ''' animate the solution over time
-        Parameters
-        ----------
-        hisotry : list
-            history of the solutions chosen by the algorith
-        points: array_like
-            points with the coordinates
-    '''
-
-    ''' approx 1500 frames for animation '''
-    key_frames_mult = len(history) // 1500
+    points = np.array(points)
+    key_frames_mult = len(history) // 100
 
     fig, ax = plt.subplots()
 
-    ''' path is a line coming through all the nodes '''
     line, = plt.plot([], [], lw=2)
 
     def init():
@@ -104,7 +94,7 @@ def animateTSP(history, points, filename):
 
     ani = FuncAnimation(fig, update, frames=range(0, len(history), key_frames_mult),
                         init_func=init, interval=3, repeat=False)
-    ani.save(filename, writer='pillow', fps=60)
+    ani.save(filename, writer='pillow', fps=30)
     plt.show()
 
 class CustomClass():
@@ -118,7 +108,7 @@ class CustomClass():
    
     def trivialInitial(self):
         self.state = [i for i in range(self.n)]
-        self.history.append(self.state)
+        self.history = [self.state]
 
     def greedyInitial(self):
         cur_node = random.randint(0,self.n-1)
@@ -130,7 +120,7 @@ class CustomClass():
             free_nodes.remove(next_node)
             self.state.append(next_node)
             cur_node = next_node
-        self.history.append(self.state)
+        self.history = [self.state]
 
     def dist(self,n1,n2):
         c1 = self.coords[n1]
@@ -148,7 +138,8 @@ class CustomClass():
     def jumpState(self,scale,cur_t, iter):
         self.segment = random.sample(self.state,2)
         self.reverse()
-        self.history.append(self.state)
+        self.history.append(list(np.copy(self.best_state)))
+        #self.history.append(list(np.copy(self.state)))
 
     def reverse(self):
         self.state[self.segment[0]:self.segment[1]] = reversed(self.state[self.segment[0]:self.segment[1]])
