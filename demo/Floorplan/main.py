@@ -7,7 +7,7 @@ def main():
     initial_t = 1000.0
     final_t = 1.0
     scale = 0.5
-    markov_iter = 10000
+    markov_iter = 1000
     scale_descent_rate = 0
     alpha = float(sys.argv[1])
     block_file = sys.argv[2]
@@ -17,7 +17,8 @@ def main():
     sa = _sa.SA(c)
     sa.setParam(descen_rate,initial_t,final_t,scale,markov_iter,scale_descent_rate)
     sa.run(True,1)
-    c.visual()
+    c.visual("result.png")
+    c.animation("result.gif")
     sa.showReport()
     sa.output()
     sa.writeHistory("output.csv")

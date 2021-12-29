@@ -5,6 +5,7 @@ import sys
 import copy
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+from matplotlib.animation import FuncAnimation
 
 def swapList(list,pos1,pos2):
     x1 = list[pos1]
@@ -27,6 +28,9 @@ class CustomClass():
         self.cur_area = 0
         self.cur_width = 0
         self.cur_height = 0
+
+        self.max_w = 0
+        self.max_h = 0
         
         self.best_hpwl = 0
         self.best_area = 0
@@ -36,6 +40,11 @@ class CustomClass():
         self.best_height = []
         self.best_pos_x = []
         self.best_pos_y = []
+
+        self.history_width = []
+        self.history_height = []
+        self.history_pos_x = []
+        self.history_pos_y = []
 
         self.pos_loci = []
         self.neg_loci = []
@@ -94,6 +103,11 @@ class CustomClass():
                 self.pos_x.append(int(words[2]))
                 self.pos_y.append(int(words[3]))
 
+            self.history_width = [self.width]
+            self.history_height = [self.height]
+            self.history_pos_x = [self.pos_x]
+            self.history_pos_y = [self.pos_y]
+
         with open(nets_file,'r') as fin:
             line = fin.readline()
             words = line.split()
@@ -150,7 +164,7 @@ class CustomClass():
             hpwl += (self.bound[1][i]-self.bound[0][i]) + (self.bound[2][i]-self.bound[3][i])
         return hpwl
 
-    def visual(self):
+    def visual(self,filename):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_aspect('equal',adjustable='box')
@@ -165,10 +179,47 @@ class CustomClass():
         ax.add_patch(boundary)
         plt.xlim([0,x_lim])
         plt.ylim([0,y_lim])
+        plt.savefig(filename)
+        #plt.show()
+   
+    def animation(self,filename):
+        print(len(self.history_width))
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_aspect('equal',adjustable='box')
+        patch = Rectangle((0,0),self.outline_width,self.outline_height,color="green",alpha=0.2)
+        def init():
+            ax.add_patch(patch)
+            return patch,
+        def animate(i):
+            ax.clear()
+            ax.set_xlim(0,self.max_w)
+            ax.set_ylim(0,self.max_h)
+            ax.set_aspect('equal',adjustable='box')
+            ax.add_patch(Rectangle((0,0),self.outline_width,self.outline_height,color="green",alpha=0.2))
+            for j in range(len(self.history_width[i])):
+                rect = Rectangle((self.history_pos_x[i][j],self.history_pos_y[i][j]),self.history_width[i][j],self.history_height[i][j], ec = "blue", color="blue",alpha=0.4)
+                ax.add_patch(rect)
+        key_frames_mult = len(self.history_width) // 1000
+        anim = FuncAnimation(
+                fig,
+                func=animate,
+                init_func=init,
+                frames=range(0,len(self.history_width),key_frames_mult),
+                interval=500,
+                blit=False)
+        anim.save(filename, writer='pillow', fps=10)
         plt.show()
-    
+
+        
+
     def jumpState(self,scale,cur_t, iter):
         self.operation(random.randint(1,3))
+
+        self.history_width.append(copy.deepcopy(self.best_width))
+        self.history_height.append(copy.deepcopy(self.best_height))
+        self.history_pos_x.append(copy.deepcopy(self.best_pos_x))
+        self.history_pos_y.append(copy.deepcopy(self.best_pos_y))
 
     def operation(self,op):
         x1 = random.randint(0,self.block_num-1)
@@ -201,6 +252,7 @@ class CustomClass():
         else:
             self.width[x1],self.height[x1] = self.height[x1], self.width[x1] 
             self.op_record[0] = x1
+
 
     
     def reverse(self):
@@ -279,6 +331,9 @@ class CustomClass():
 
     def getEnergy(self):
         self.cur_width, self.cur_height = self.getArea()
+        self.max_w = max(self.max_w,self.cur_width)
+        self.max_h = max(self.max_h,self.cur_height)
+
         self.area = self.cur_width*self.cur_height
         self.hpwl = self.getHPWL()
         return self.skew(self.cur_width,self.cur_height)*self.alpha*self.area+(1-self.alpha)*self.hpwl
