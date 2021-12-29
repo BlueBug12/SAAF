@@ -2,6 +2,9 @@ import _sa
 import random
 import numpy as np
 import sys
+import copy
+import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 
 def swapList(list,pos1,pos2):
     x1 = list[pos1]
@@ -146,6 +149,23 @@ class CustomClass():
         for i in range(self.nets_num):
             hpwl += (self.bound[1][i]-self.bound[0][i]) + (self.bound[2][i]-self.bound[3][i])
         return hpwl
+
+    def visual(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_aspect('equal',adjustable='box')
+        x_lim = self.outline_width
+        y_lim = self.outline_height
+        for i in range(len(self.width)):
+            x_lim = max(self.best_pos_x[i]+self.best_width[i],x_lim)
+            y_lim = max(self.best_pos_y[i]+self.best_height[i],y_lim)
+            rect = Rectangle((self.best_pos_x[i],self.best_pos_y[i]),self.best_width[i],self.best_height[i], ec = "blue", color = "blue", alpha=0.4)
+            ax.add_patch(rect)
+        boundary = Rectangle((0,0),self.outline_width,self.outline_height,color="green",alpha=0.2)
+        ax.add_patch(boundary)
+        plt.xlim([0,x_lim])
+        plt.ylim([0,y_lim])
+        plt.show()
     
     def jumpState(self,scale,cur_t, iter):
         self.operation(random.randint(1,3))
@@ -212,10 +232,10 @@ class CustomClass():
         self.best_area = self.area
         self.best_w = self.cur_width 
         self.best_h = self.cur_height
-        self.best_width = self.width[:]
-        self.best_height = self.height[:] 
-        self.best_pos_x = self.pos_x[:]
-        self.best_pos_y = self.pos_y[:]
+        self.best_width = copy.deepcopy(self.width)
+        self.best_height = copy.deepcopy(self.height)
+        self.best_pos_x = copy.deepcopy(self.pos_x)
+        self.best_pos_y = copy.deepcopy(self.pos_y)
 
 
     def getArea(self):

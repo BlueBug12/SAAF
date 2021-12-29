@@ -17,6 +17,7 @@ def main():
     sa = _sa.SA(c)
     sa.setParam(descen_rate,initial_t,final_t,scale,markov_iter,scale_descent_rate)
     sa.run(True,1)
+    c.visual()
     sa.showReport()
     sa.output()
     sa.writeHistory("output.csv")

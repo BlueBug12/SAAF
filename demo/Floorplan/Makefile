@@ -19,4 +19,4 @@ test:
 
 
 clean: 
-	rm -rf *.o *.so __pycache__ .pytest_cache *.txt *.csv *.HPWL
+	rm -rf *.o *.so __pycache__ .pytest_cache *.txt *.csv *.HPWL */__pycache__/
