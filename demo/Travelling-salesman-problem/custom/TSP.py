@@ -11,9 +11,10 @@ def parser(filename):
     with open(filename) as f:
         n = int(f.readline().split()[0])
         for i in range(n):
-            coord = f.readline().split()
-            coords.append([float(pos) for pos in coord])
-    return coords
+            coord = f.readline().split(',')
+            coords.append([int(pos) for pos in coord])
+    random.shuffle(coords)
+    return np.array(coords)
 
 def plotTSP(paths, points, num_iters=1):
 
@@ -61,7 +62,7 @@ def plotTSP(paths, points, num_iters=1):
 
 def animateTSP(history, points, filename):
     points = np.array(points)
-    key_frames_mult = len(history) // 100
+    key_frames_mult = len(history) // 1000
 
     fig, ax = plt.subplots()
 
@@ -93,7 +94,7 @@ def animateTSP(history, points, filename):
     ''' animate precalulated solutions '''
 
     ani = FuncAnimation(fig, update, frames=range(0, len(history), key_frames_mult),
-                        init_func=init, interval=3, repeat=False)
+                        init_func=init, interval=10, repeat=False)
     ani.save(filename, writer='pillow', fps=30)
     plt.show()
 
@@ -108,11 +109,13 @@ class CustomClass():
    
     def trivialInitial(self):
         self.state = [i for i in range(self.n)]
+        self.best_state = np.copy(self.state)
         self.history = [self.state]
 
     def greedyInitial(self):
         cur_node = random.randint(0,self.n-1)
         self.state = [cur_node]
+        self.best_state = np.copy(self.state)
         free_nodes = set([i for i in range(self.n)])
         free_nodes.remove(cur_node)
         while free_nodes:
