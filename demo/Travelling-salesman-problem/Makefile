@@ -9,10 +9,10 @@ $(TARGET): _sa.cpp _sa.hpp
 
 .PHONY: clean test run
 run: 
-	python3 main.py testbench/coord1.txt
+	python3 main.py
 
 test:
-	python3 -m pytest test.py testbench/coord1.txt
+	python3 -m pytest test.py 
 
 clean: 
 	rm -rf *.o *.so .pytest_cache *.txt *.csv */__pycache__/ __pycache__/

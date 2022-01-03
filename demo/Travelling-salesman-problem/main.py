@@ -9,10 +9,17 @@ def main():
     initial_t = 1000
     final_t = 1e-8
     scale = 0.5
-    markov_iter = 1
+    markov_iter = 20
     scale_descent_rate = 0
-    #c = m.CustomClass(parser(sys.argv[1]))
-    c = m.CustomClass(NodeGenerator(200,200,70).generate())
+    c = None
+
+    if len(sys.argv) == 2:
+        c = m.CustomClass(parser(sys.argv[1]))
+    elif len(sys.argv) == 1:
+        c = m.CustomClass(NodeGenerator(200,200,70).generate())
+    else:
+        print("Wrong parameter.")
+        return
     c.trivialInitial()
     #c.greedyInitial()
     sa = _sa.SA(c)
