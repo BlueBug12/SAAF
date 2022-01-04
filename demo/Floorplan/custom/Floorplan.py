@@ -45,6 +45,7 @@ class CustomClass():
         self.history_height = []
         self.history_pos_x = []
         self.history_pos_y = []
+        self.history_cost = []
 
         self.pos_loci = []
         self.neg_loci = []
@@ -103,10 +104,10 @@ class CustomClass():
                 self.pos_x.append(int(words[2]))
                 self.pos_y.append(int(words[3]))
 
-            self.history_width = [self.width]
-            self.history_height = [self.height]
-            self.history_pos_x = [self.pos_x]
-            self.history_pos_y = [self.pos_y]
+            self.history_width = [copy.deepcopy(self.width)]
+            self.history_height = [copy.deepcopy(self.height)]
+            self.history_pos_x = [copy.deepcopy(self.pos_x)]
+            self.history_pos_y = [copy.deepcopy(self.pos_y)]
 
         with open(nets_file,'r') as fin:
             line = fin.readline()
@@ -134,6 +135,8 @@ class CustomClass():
         for i in range(self.block_num):
             self.match_x[self.pos_loci[i]] = i
             self.match_y[self.neg_loci[i]] = i
+        w,h = self.getArea()
+        self.history_cost = [int(w*h)]
 
     def updateNet(self):
         self.bound[0].fill(int(1e9))
@@ -179,6 +182,7 @@ class CustomClass():
         ax.add_patch(boundary)
         plt.xlim([0,x_lim])
         plt.ylim([0,y_lim])
+        plt.title("Final area = {}".format(self.history_cost[-1]))
         plt.savefig(filename)
         #plt.show()
    
@@ -192,6 +196,7 @@ class CustomClass():
             return patch,
         def animate(i):
             ax.clear()
+            ax.set_title("Area = {}".format(self.history_cost[i]))
             ax.set_xlim(0,self.max_w)
             ax.set_ylim(0,self.max_h)
             ax.set_aspect('equal',adjustable='box')
@@ -219,6 +224,7 @@ class CustomClass():
         self.history_height.append(copy.deepcopy(self.best_height))
         self.history_pos_x.append(copy.deepcopy(self.best_pos_x))
         self.history_pos_y.append(copy.deepcopy(self.best_pos_y))
+        self.history_cost.append(int(self.best_w*self.best_h))
 
     def operation(self,op):
         x1 = random.randint(0,self.block_num-1)
