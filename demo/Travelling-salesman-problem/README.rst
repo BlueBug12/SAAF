@@ -22,6 +22,17 @@ or just use the default setting::
 
   make run
 
+Result
+======
+* Random generated graph
+.. image:: ./result/random.gif
+
+.. image:: ./result/random.png
+
+* 100-gon 
+.. image:: ./result/100-gon.gif
+
+.. image:: ./result/100-gon.png
 
 Reference
 =========

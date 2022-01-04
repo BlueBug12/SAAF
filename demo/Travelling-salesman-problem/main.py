@@ -27,7 +27,7 @@ def main():
     sa.run(True,100)
     sa.showReport()
     c.animate("animation.gif")
-    c.visual()
+    c.visual("result.png")
 
 if __name__ == "__main__":
     main()
