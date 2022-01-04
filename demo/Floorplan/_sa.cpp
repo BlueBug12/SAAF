@@ -76,9 +76,9 @@ void SA::run(bool show, int logger_iter){
             std::cout<<"AG rate = "<<std::setw(8)<<accept_good_rate;
             std::cout<<"AB rate = "<<std::setw(8)<<accept_bad_rate;
             std::cout<<"RB rate = "<<std::setw(8)<<reject_bad_rate;
-            std::cout<<"T = "<<std::setw(13)<<cur_t;
-            std::cout<<"current cost = "<<std::setw(10)<<cur_e;
-            std::cout<<"best cost = "<<std::setw(10)<<m_best_e<<std::endl;
+            std::cout<<"T = "<<std::setw(10)<<cur_t;
+            std::cout<<"current cost = "<<std::setw(12)<<cur_e;
+            std::cout<<"best cost = "<<std::setw(12)<<m_best_e<<std::endl;
         }
 
         cur_t *= m_descent_rate;

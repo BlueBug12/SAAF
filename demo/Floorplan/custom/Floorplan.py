@@ -183,7 +183,6 @@ class CustomClass():
         #plt.show()
    
     def animation(self,filename):
-        print(len(self.history_width))
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_aspect('equal',adjustable='box')
