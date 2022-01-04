@@ -29,6 +29,18 @@ or just use the default setting::
 
   make run
 
+Result
+======
+
+* testbench: ami33
+.. image:: ./result/ami33.gif
+
+.. image:: ./result/ami33.png
+
+* testbench: ami49
+.. image:: ./result/ami49.gif
+
+.. image:: ./result/ami49.png
 
 Reference
 =========
