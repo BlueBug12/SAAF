@@ -60,7 +60,7 @@ class SA{
        void output();
        bool stopCondition(double cur_t, int iter, double ag_r, double ab_r, double rb_r, double best_e);
        void writeHistory(std::string file_name);
-       void plot();
+       void plot(std::string filename);
        void showReport();
        std::vector<record>records;
 
