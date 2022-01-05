@@ -29,7 +29,7 @@ def main():
     sa.showReport()
     sa.output()
     sa.writeHistory(history_file)
-    sa.plot()
+    sa.plot("energy.png")
 
 if __name__ == "__main__":
     main()

@@ -15,4 +15,4 @@ test:
 	python3 -m pytest test.py
 
 clean: 
-	rm -rf *.o *.so __pycache__ .pytest_cache *.txt *.csv
+	rm -rf *.o *.so __pycache__ .pytest_cache *.txt *.csv */__pycache__/
