@@ -10,7 +10,7 @@ def main():
     initial_t = 100.0
     final_t = 1.0
     scale = 0.5
-    markov_iter = 100
+    markov_iter = 1000
     scale_descent_rate = 0.99
     show = True
     logger_iter = 10
