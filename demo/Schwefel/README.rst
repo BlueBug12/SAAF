@@ -20,6 +20,7 @@ Execution
 Result
 ======
 ::
+
 	Iteration = 0         AG rate = 0.2     AB rate = 0.33    RB rate = 0.47    T = 100          current cost = 1705.91   best cost = 1705.91                                                                                                                           
 	Iteration = 10        AG rate = 0.08    AB rate = 0.25    RB rate = 0.67    T = 81.7073      current cost = 1392.63   best cost = 883.438                                                                                                                           
 	Iteration = 20        AG rate = 0.07    AB rate = 0.09    RB rate = 0.84    T = 66.7608      current cost = 716.772   best cost = 382.497                                                                                                                           
