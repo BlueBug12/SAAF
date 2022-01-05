@@ -41,17 +41,9 @@ Result
 	| 9   3 |   2   |   6 5 |
 	=========================
 
-	Iteration = 0         AG rate = 0       AB rate = 1       RB rate = 0       T = 0.5          current cost = -127      best cost = -129      
-	Iteration = 1000      AG rate = 0       AB rate = 0       RB rate = 1       T = 0.495025     current cost = -152      best cost = -156      
-	Iteration = 2000      AG rate = 0       AB rate = 0       RB rate = 1       T = 0.490099     current cost = -157      best cost = -158      
-	Iteration = 3000      AG rate = 0       AB rate = 0       RB rate = 1       T = 0.485223     current cost = -153      best cost = -158      
-	Iteration = 4000      AG rate = 0       AB rate = 0       RB rate = 1       T = 0.480395     current cost = -154      best cost = -158      
-	Iteration = 5000      AG rate = 0       AB rate = 0       RB rate = 1       T = 0.475615     current cost = -156      best cost = -158      
-	Iteration = 6000      AG rate = 0       AB rate = 0       RB rate = 1       T = 0.470882     current cost = -156      best cost = -158      
-	Iteration = 7000      AG rate = 0       AB rate = 0       RB rate = 1       T = 0.466197     current cost = -156      best cost = -158      
-	Iteration = 8000      AG rate = 0       AB rate = 0       RB rate = 1       T = 0.461558     current cost = -156      best cost = -158      
-	Iteration = 9000      AG rate = 0       AB rate = 0       RB rate = 1       T = 0.456965     current cost = -158      best cost = -160      
-	Iteration = 10000     AG rate = 0       AB rate = 0       RB rate = 1       T = 0.452418     current cost = -158      best cost = -160      
+	Iteration = 0         AG rate = 1       AB rate = 0       RB rate = 0       T = 0.5          current cost = -132      best cost = -132      
+	Iteration = 1000      AG rate = 0       AB rate = 0       RB rate = 1       T = 0.495025     current cost = -157      best cost = -158      
+	Iteration = 2000      AG rate = 0       AB rate = 0       RB rate = 1       T = 0.490099     current cost = -148      best cost = -158      
 
 	Solved sudoku:
 	=========================
@@ -68,6 +60,7 @@ Result
 	| 9 4 3 | 7 2 1 | 8 6 5 |
 	=========================
 
+.. image:: ./result/energy.png
 
 Reference
 =========

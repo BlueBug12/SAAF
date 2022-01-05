@@ -17,6 +17,7 @@ def main():
     sa = _sa.SA(c)
     sa.setParam(descent_rate,initial_t,final_t,scale,markov_iter,scale_descent_rate)
     sa.run(True,1000)
+    sa.plot("energy.png")
     print("\nSolved sudoku:")
     c.view()
 
