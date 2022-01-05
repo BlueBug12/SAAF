@@ -7,7 +7,7 @@ class CustomClass():
     def __init__(self,filename):
         self.state = self.parser(filename)
         self.none_zero_idx = np.arange(81)[self.state>0]
-        self.best_state = np.zeros(81)
+        self.best_state = np.copy(self.state)
         self.swap_idx = [0,0]
 
     def random_fill(self):
@@ -63,7 +63,7 @@ class CustomClass():
         print(out_s)
 
     def getResult(self):
-        return self.state
+        return self.best_state
 
     def jumpState(self,scale,cur_t, iter):
         block = random.randint(0,8)
@@ -77,7 +77,7 @@ class CustomClass():
         self.state[self.swap_idx[0]], self.state[self.swap_idx[1]] = self.state[self.swap_idx[1]], self.state[self.swap_idx[0]]
 
     def storeBest(self):
-        pass
+        self.best_state = np.copy(self.state);
 
     def getEnergy(self)->float:
         score = 0
