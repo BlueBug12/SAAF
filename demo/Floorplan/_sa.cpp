@@ -76,9 +76,9 @@ void SA::run(bool show, int logger_iter){
             std::cout<<"AG rate = "<<std::setw(8)<<accept_good_rate;
             std::cout<<"AB rate = "<<std::setw(8)<<accept_bad_rate;
             std::cout<<"RB rate = "<<std::setw(8)<<reject_bad_rate;
-            std::cout<<"T = "<<std::setw(10)<<cur_t;
-            std::cout<<"current cost = "<<std::setw(12)<<cur_e;
-            std::cout<<"best cost = "<<std::setw(12)<<m_best_e<<std::endl;
+            std::cout<<"T = "<<std::setw(13)<<cur_t;
+            std::cout<<"current cost = "<<std::setw(10)<<cur_e;
+            std::cout<<"best cost = "<<std::setw(10)<<m_best_e<<std::endl;
         }
 
         cur_t *= m_descent_rate;
@@ -161,7 +161,7 @@ void SA::writeHistory(std::string file_name){
     fout.close();
 }
 
-void SA::plot(){
+void SA::plot(std::string filename){
     std::vector<int>it;
     std::vector<double>e;
     std::vector<double>ave_e;
@@ -175,15 +175,15 @@ void SA::plot(){
     }
     py::object plt = py::module::import("matplotlib.pyplot");
     plt.attr("figure")("figsize"_a=*py::make_tuple(6,4),"facecolor"_a="#FFFFFF");
-    plt.attr("title")("result");
+    plt.attr("title")("Energy history");
     plt.attr("xlim")(0,m_iter);
-    plt.attr("xlabel")("iter");
+    plt.attr("xlabel")("iteration");
     plt.attr("ylabel")("energy");
-    plt.attr("plot")(it,e,"b-","label"_a="cur_e");
-    plt.attr("plot")(it,ave_e,"g-","label"_a="ave_e");
+    plt.attr("plot")(it,ave_e,"b-","label"_a="ave_e");
     plt.attr("plot")(it,best_e,"r-","label"_a="best_e");
     plt.attr("legend")();
     plt.attr("show")();
+    plt.attr("savefig")(filename);
 }
 
 PYBIND11_MODULE(_sa, m){
