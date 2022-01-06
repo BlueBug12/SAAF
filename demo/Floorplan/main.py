@@ -22,7 +22,7 @@ def main():
     sa.showReport()
     sa.output()
     sa.writeHistory("output.csv")
-    sa.plot()
+    sa.plot("energy.png")
 
 if __name__ == "__main__":
     main()
